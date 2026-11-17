@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vocabulary Practice Hub – DMI Diploma in English</title>
+<link rel="icon" href="../assets/dmi-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+Tamil:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0}
+.bar input{flex:1;min-width:200px}
+.setlab{font-size:12px;font-weight:800;letter-spacing:1px;color:var(--muted);margin:12px 0 6px;text-transform:uppercase}
+.w{background:#fff;border:1px solid var(--line);border-left:6px solid var(--y);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.w.done{border-left-color:var(--ok)}
+.w .hd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.w .num{font-size:12px;color:var(--muted);font-weight:700;min-width:34px}
+.w .word{font-size:21px;font-weight:800}
+.w .mean{font-size:18px;font-weight:600}
+.w .acts{margin-left:auto;display:flex;gap:6px}
+.ib{appearance:none;border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:5px 9px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--ink)}
+.ib.on{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.forms{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0}
+.forms div{background:var(--bg);border-radius:8px;padding:6px 8px;font-weight:700;font-size:14.5px;overflow-wrap:anywhere}
+.forms small{display:block;font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.4px;text-transform:uppercase}
+.ex{border-top:1px dashed var(--line);padding-top:8px;font-size:15.5px}
+.ex mark{background:var(--y2);font-weight:700;padding:0 3px;border-radius:3px}
+.ex .ta{color:#3a3a3a}
+@media(max-width:560px){.forms{grid-template-columns:repeat(2,1fr)}}
+.flash{min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;border:2px solid var(--ink);user-select:none}
+.flash .word{font-size:40px;font-weight:800}
+.flash .mean{font-size:24px;font-weight:700;margin:6px 0 10px}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.q .opt{display:block;width:100%;text-align:left;margin:8px 0;padding:13px 14px;border:1.5px solid #bdb9aa;border-radius:10px;background:#fff;font:inherit;font-size:16px;cursor:pointer;color:var(--ink)}
+.q .opt.ok{background:var(--okbg);border-color:var(--ok);font-weight:700}
+.q .opt.no{background:var(--badbg);border-color:var(--bad)}
+.prog{font-size:13px;font-weight:700;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <a href="../"><img src="../assets/dmi-logo.png" alt="DMI Computer Education – home"></a>
+  <div><small>DIPLOMA IN ENGLISH</small><h1>Vocabulary Practice Hub</h1></div>
+  <nav><a class="on" href="./">Practice</a><a href="../test/">Tests</a></nav>
+</div></header>
+<main class="wrap">
+  <div class="chips" id="modes">
+    <button class="chip on" data-m="list">Word list</button>
+    <button class="chip" data-m="flash">Flashcards</button>
+    <button class="chip" data-m="quiz">Quick practice</button>
+  </div>
+  <div id="pages"></div>
+  <div class="bar">
+    <input type="search" id="q" placeholder="Search a word or Tamil meaning (all pages)…" aria-label="Search words">
+    <span class="prog" id="prog"></span>
+  </div>
+  <div id="view"></div>
+</main>
+<footer class="foot"><b>DMI Computer Education</b> · Since 2008 · Quality education creates bright future.</footer>
+<script src="../assets/config.js"></script>
+<script src="../assets/words.js"></script>
+<script>
+(function(){
+var W=window.DMI_WORDS, C=window.DMI_CONFIG, $=function(i){return document.getElementById(i)};
+var state={mode:'list',page:80,q:'',fi:0,flip:false,quiz:null};
+var learned={};
+try{learned=JSON.parse(localStorage.getItem('dmi_vocab_learned')||'{}')}catch(e){}
+function save(){try{localStorage.setItem('dmi_vocab_learned',JSON.stringify(learned))}catch(e){}}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function speak(t){try{var u=new SpeechSynthesisUtterance(t);u.lang='en-GB';u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function hi(o){if(!o.b)return esc(o.en);var re=new RegExp('(^|[^A-Za-z-])('+o.b.replace(/[-\/\\^$*+?.()|[\]{}]/g,'\\$&')+')(?![A-Za-z-])','i');return esc(o.en).replace(re,'$1<mark>$2</mark>')}
+function cur(){var q=state.q.trim().toLowerCase();
+  if(q)return W.filter(function(o){return o.w.toLowerCase().indexOf(q)===0||o.ta.indexOf(q)>-1||o.f.join(' ').toLowerCase().indexOf(q)>-1});
+  return W.filter(function(o){return o.p===state.page})}
+function pagesUI(){var h='';C.TESTS.forEach(function(t){h+='<div class="setlab">'+esc(t.name)+' · pages '+t.pages[0]+'–'+t.pages[t.pages.length-1]+'</div><div class="chips">';
+  t.pages.forEach(function(p){h+='<button class="chip'+(p===state.page&&!state.q?' on':'')+'" data-p="'+p+'">Page '+p+'</button>'});h+='</div>'});
+  $('pages').innerHTML=h}
+function card(o){var d=learned[o.n];
+  return '<article class="w'+(d?' done':'')+'"><div class="hd"><span class="num">'+o.n+'</span><span class="word">'+esc(o.w)+'</span><span class="mean ta">'+esc(o.ta)+'</span>'+
+  '<span class="acts"><button class="ib" data-say="'+esc(o.w+'. '+o.en)+'" aria-label="Listen to '+esc(o.w)+'">🔊 Listen</button><button class="ib'+(d?' on':'')+'" data-learn="'+o.n+'">'+(d?'✓ Learned':'Mark learned')+'</button></span></div>'+
+  '<div class="forms"><div><small>Base (V1)</small>'+esc(o.w)+'</div><div><small>Past (V2)</small>'+esc(o.f[0])+'</div><div><small>Past participle (V3)</small>'+esc(o.f[1])+'</div><div><small>He / She / It</small>'+esc(o.f[2])+'</div><div><small>-ing form</small>'+esc(o.f[3])+'</div></div>'+
+  '<div class="ex"><div>'+hi(o)+'</div><div class="ta">'+esc(o.tas)+'</div></div></article>'}
+function render(){var L=cur(),v=$('view');
+  var done=L.filter(function(o){return learned[o.n]}).length;
+  $('prog').textContent=(state.q?'Search: ':'Page '+state.page+': ')+L.length+' words · '+done+' learned';
+  if(!L.length){v.innerHTML='<div class="card muted">No words found.</div>';return}
+  if(state.mode==='list'){v.innerHTML=L.map(card).join('');return}
+  if(state.mode==='flash'){if(state.fi>=L.length)state.fi=0;var o=L[state.fi];
+    v.innerHTML='<div class="card flash" id="fc" tabindex="0" role="button" aria-label="Flip card">'+(state.flip?
+      '<div class="word">'+esc(o.w)+'</div><div class="mean ta">'+esc(o.ta)+'</div><div><b>'+esc(o.w)+' – '+esc(o.f[0])+' – '+esc(o.f[1])+' – '+esc(o.f[2])+' – '+esc(o.f[3])+'</b></div><div style="margin-top:10px">'+hi(o)+'</div><div class="ta muted">'+esc(o.tas)+'</div>':
+      '<div class="word">'+esc(o.w)+'</div><div class="muted">Tap to see the meaning</div>')+'</div>'+
+      '<div class="row"><button class="btn" id="fp">← Back</button><span class="prog" style="align-self:center">'+(state.fi+1)+' / '+L.length+'</span><button class="btn pri" id="fn">Next →</button><button class="btn" id="fs">🔊</button></div>';
+    $('fc').onclick=function(){state.flip=!state.flip;render()};
+    $('fc').onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();state.flip=!state.flip;render()}};
+    $('fp').onclick=function(){state.fi=(state.fi-1+L.length)%L.length;state.flip=false;render()};
+    $('fn').onclick=function(){state.fi=(state.fi+1)%L.length;state.flip=false;render()};
+    $('fs').onclick=function(){speak(o.w)};return}
+  if(state.mode==='quiz'){if(!state.quiz)newQuiz(L);drawQuiz()}}
+function newQuiz(L){var pool=L.length>=4?L:W;var qs=shuffle(L).slice(0,10).map(function(o,i){
+    var kind=i%3;var wrong=[];shuffle(pool).forEach(function(x){if(wrong.length<3&&x.w!==o.w&&x.ta!==o.ta&&wrong.every(function(y){return y.w!==x.w&&y.ta!==x.ta}))wrong.push(x)});
+    if(kind===0)return{t:'What is the Tamil meaning of <b>'+esc(o.w)+'</b>?',a:o.ta,opts:shuffle([o.ta].concat(wrong.map(function(x){return x.ta}))),ta:true};
+    if(kind===1)return{t:'Which English word means <b class="ta">'+esc(o.ta)+'</b>?',a:o.w,opts:shuffle([o.w].concat(wrong.map(function(x){return x.w})))};
+    var set=[];[o.f[0],o.f[1],o.w,o.f[2],o.f[3]].forEach(function(x){if(set.indexOf(x)<0)set.push(x)});
+    return{t:'Past tense (V2) of <b>'+esc(o.w)+'</b>?',a:o.f[0],opts:shuffle(set.slice(0,4))}});
+  state.quiz={qs:qs,i:0,score:0,picked:null}}
+function drawQuiz(){var Q=state.quiz,v=$('view');
+  if(Q.i>=Q.qs.length){v.innerHTML='<div class="card" style="text-align:center"><h2>'+Q.score+' / '+Q.qs.length+'</h2><p class="muted">Quick practice finished. This is practice only — marks are not recorded.</p><div class="row"><button class="btn pri" id="again">Practise again</button><a class="btn dark" href="../test/" style="text-decoration:none">Take the real test</a></div></div>';
+    $('again').onclick=function(){state.quiz=null;render()};return}
+  var q=Q.qs[Q.i];
+  v.innerHTML='<div class="card q"><div class="prog">Question '+(Q.i+1)+' of '+Q.qs.length+' · Score '+Q.score+'</div><p style="font-size:19px">'+q.t+'</p>'+
+    q.opts.map(function(o,k){var c='';if(Q.picked!==null){if(o===q.a)c=' ok';else if(k===Q.picked)c=' no'}
+      return '<button class="opt'+(q.ta?' ta':'')+c+'" data-k="'+k+'"'+(Q.picked!==null?' disabled':'')+'>'+esc(o)+'</button>'}).join('')+
+    (Q.picked!==null?'<div class="row"><button class="btn pri" id="nx">Next →</button></div>':'')+'</div>';
+  Array.prototype.forEach.call(v.querySelectorAll('.opt'),function(b){b.onclick=function(){Q.picked=+b.dataset.k;if(q.opts[Q.picked]===q.a)Q.score++;drawQuiz()}});
+  if($('nx')){$('nx').onclick=function(){Q.i++;Q.picked=null;drawQuiz()};$('nx').focus()}}
+$('modes').onclick=function(e){var b=e.target.closest('[data-m]');if(!b)return;state.mode=b.dataset.m;state.quiz=null;state.flip=false;
+  Array.prototype.forEach.call(this.children,function(c){c.classList.toggle('on',c===b)});render()};
+$('pages').onclick=function(e){var b=e.target.closest('[data-p]');if(!b)return;state.page=+b.dataset.p;state.q='';$('q').value='';state.fi=0;state.quiz=null;state.flip=false;pagesUI();render();};
+$('q').oninput=function(){state.q=this.value;state.fi=0;state.quiz=null;pagesUI();render()};
+$('view').onclick=function(e){var s=e.target.closest('[data-say]');if(s){speak(s.dataset.say);return}
+  var l=e.target.closest('[data-learn]');if(l){var n=l.dataset.learn;if(learned[n])delete learned[n];else learned[n]=1;save();render()}};
+pagesUI();render();
+})();
+</script>
+</body>
+</html>

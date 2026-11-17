@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DMI Diploma in English – Vocabulary</title>
+<meta name="description" content="DMI Computer Education – Diploma in English vocabulary practice hub and vocabulary tests.">
+<link rel="icon" href="assets/dmi-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+Tamil:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.hero{padding:26px 0 8px}
+.hero h2{font-size:32px;line-height:1.15;max-width:18ch}
+.hero p{max-width:60ch}
+.big{display:block;text-decoration:none;border:2px solid var(--ink);border-radius:var(--r);background:#fff;padding:22px;position:relative;transition:transform .12s}
+.big:hover{transform:translateY(-3px)}
+.big.y{background:var(--y)}
+.big h3{margin:0 0 6px;font-size:22px}
+.big p{margin:0 0 14px;font-size:14.5px}
+.big span.go{font-weight:800}
+.branches{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.branches span{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <img src="assets/dmi-logo.png" alt="DMI Computer Education logo">
+  <div><small>SINCE 2008</small><h1>DMI Computer Education</h1><div class="tag">Quality education creates bright future.</div></div>
+</div></header>
+<main class="wrap">
+  <section class="hero">
+    <h2>Diploma in English — Vocabulary</h2>
+    <p class="muted">Learn the verbs from your <b>Do it yourself</b> book (pages 80–99) with Tamil meanings, all five verb forms and example sentences — then sit the vocabulary test for your pages.</p>
+  </section>
+  <div class="grid2">
+    <a class="big y" href="practice/">
+      <h3>Vocabulary Practice Hub</h3>
+      <p>Word lists by book page, Tamil meaning, verb forms (run – ran – run – runs – running), English and Tamil sentences, flashcards and quick practice.</p>
+      <span class="go">Start practising →</span>
+    </a>
+    <a class="big" href="test/">
+      <h3>Vocabulary Tests</h3>
+      <p>Four tests, 100 marks each. Enter your name, registration number and branch, then begin. One test for every 5 pages of the book.</p>
+      <span class="go">Go to the tests →</span>
+    </a>
+  </div>
+  <section style="margin-top:26px">
+    <b>Our branches</b>
+    <div class="branches" id="br"></div>
+  </section>
+</main>
+<footer class="foot"><b>DMI Computer Education</b> · Since 2008 · Hotline / WhatsApp <span id="hl"></span></footer>
+<script src="assets/config.js"></script>
+<script>
+var C=window.DMI_CONFIG;
+document.getElementById('br').innerHTML=C.BRANCHES.map(function(b){return '<span>'+b+'</span>'}).join('');
+document.getElementById('hl').textContent=C.HOTLINE;
+</script>
+</body>
+</html>
